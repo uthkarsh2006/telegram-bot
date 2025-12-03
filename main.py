@@ -10,8 +10,12 @@ import requests
 
 # ---------------- Environment Variable ---------------- #
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+APP_URL = os.getenv("APP_URL")  # Your Render app URL (e.g., "https://your-app.onrender.com")
+
 if not BOT_TOKEN:
     raise ValueError("Error: BOT_TOKEN is not set! Add it in Render Environment Variables.")
+if not APP_URL:
+    raise ValueError("Error: APP_URL is not set! Add it in Render Environment Variables.")
 
 # ---------------- FastAPI App ---------------- #
 app = FastAPI()
@@ -55,12 +59,17 @@ async def telegram_webhook(req: Request):
 def read_root():
     return {"message": "Bot is running!"}
 
-# ---------------- Start the Bot ---------------- #
+# ---------------- Start the Bot & Set Webhook ---------------- #
 async def start_bot():
     await application.initialize()
     await application.start()
+
+    # Set Telegram webhook automatically
+    webhook_url = f"{APP_URL}/{BOT_TOKEN}"
+    await application.bot.set_webhook(webhook_url)
+    print(f"Webhook set to: {webhook_url}")
     print("Bot started successfully!")
 
-# Create asyncio task to run bot
+# ---------------- Run Bot ---------------- #
 loop = asyncio.get_event_loop()
 loop.create_task(start_bot())
