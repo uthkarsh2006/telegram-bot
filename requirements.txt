@@ -1,8 +1,5 @@
 python-telegram-bot==20.7
 fastapi==0.104.0
 uvicorn==0.27.0
-requests==2.32.0
+requests
 schedule==1.2.0
-
-
-
